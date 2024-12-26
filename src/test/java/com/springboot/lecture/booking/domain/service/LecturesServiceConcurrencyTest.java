@@ -59,7 +59,39 @@ class LecturesServiceConcurrencyTest {
         lectureJpaRepository.save(savedLecture);
         lectureId = savedLecture.getLectureId();
     }
-    
+
+    @Test
+    void 동일한_유저가_같은_특강을_5번_신청하면_1번째_요청만_성공한다() throws InterruptedException {
+        //given
+        int threadCount = 5;
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        //when
+        for (int i = 0; i < threadCount; i++) {
+            executorService.execute(() -> {
+                try {
+                    lecturesService.applyLecture(userId, lectureId);
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+        executorService.shutdown();
+
+        //then
+        LectureEntity lecture = lectureJpaRepository.findById(lectureId).orElseThrow(RuntimeException::new);
+
+        assertThat(lecture).isNotNull();
+        assertThat(lecture.getEnrolledCount()).isEqualTo(1);
+
+        EnrollmentHistoryEntity enrollmentHistory = enrollmentHistoryRepository.findTopByUserIdAndLectureIdOrderByCreatedAtDesc(userId, lectureId);
+
+        assertThat(enrollmentHistory).isNotNull();
+        assertThat(enrollmentHistory.getStatus()).isEqualTo(EnrollmentStatus.APPLY.toString());
+    }
+
     @Test
     void 동시에_동일한_특강에_40명이_신청할_때_선착순_30명만_성공하고_나머지는_실패한다() throws InterruptedException {
         //given
