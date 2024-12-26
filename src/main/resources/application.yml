@@ -1,0 +1,19 @@
+server:
+  port: 80
+
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/test
+    username: root
+    password: 1234
+
+  # JPA 설정
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true  # SQL 쿼리 로그 출력
+    properties:
+      hibernate:
+        format_sql: true  # SQL 로그를 보기 좋게 포맷
+    hibernate:
+      ddl-auto: update
