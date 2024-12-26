@@ -15,6 +15,29 @@ import java.util.stream.Collectors;
 public class EnrollmentHistoryService {
     private final EnrollmentHistoryRepository enrollmentHistoryRepository;
 
+    public EnrollmentHistoryEntity saveEnrollmentHistoryForApply(long userId, long lectureId) {
+        if(hasAlreadyApplied(userId, lectureId)) {
+            throw new RuntimeException("이미 신청한 강의 입니다.");
+        }
+
+        EnrollmentHistoryEntity enrollmentHistoryEntity = EnrollmentHistoryEntity.builder()
+                .lectureId(lectureId)
+                .userId(userId)
+                .status(EnrollmentStatus.APPLY.toString())
+                .build();
+
+        return enrollmentHistoryRepository.save(enrollmentHistoryEntity);
+    }
+
+    public boolean hasAlreadyApplied(long userId, long lectureId) {
+        EnrollmentHistoryEntity entity = enrollmentHistoryRepository.findTopByUserIdAndLectureIdOrderByCreatedAtDesc(userId, lectureId);
+
+        if(ObjectUtils.isEmpty(entity) || EnrollmentStatus.CANCEL.toString().equals(entity.getStatus())) {
+            return false;
+        }
+
+        return true;
+    }
 
     public List<Long> getAppliedLectureIdsByUser(long userId) {
         String status = EnrollmentStatus.APPLY.toString();

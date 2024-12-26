@@ -53,4 +53,11 @@ public class LecturesController {
 
         throw new RuntimeException("잘못된 접근입니다.");
     }
+
+    @PostMapping("/apply")
+    public String applyLectureByLectureId(@RequestBody LectureApplyRequestDTO requestDTO) {
+        lecturesUseCase.applyLecture(userId, requestDTO.lectureId());
+
+        return "ok";
+    }
 }

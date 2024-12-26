@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LectureRepository {
+    Optional<LectureEntity> findByIdForUpdate(long lectureId);
     List<LectureEntity> findLecturesByLectureStartTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
+    LectureEntity save(LectureEntity lecture);
     List<LectureEntity> findAllById(Iterable<Long> ids);
 }

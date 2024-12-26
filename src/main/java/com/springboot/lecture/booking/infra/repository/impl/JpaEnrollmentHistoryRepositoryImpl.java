@@ -14,8 +14,18 @@ public class JpaEnrollmentHistoryRepositoryImpl implements EnrollmentHistoryRepo
     private final EnrollmentHistoryJpaRepository enrollmentHistoryJpaRepository;
 
     @Override
+    public EnrollmentHistoryEntity findTopByUserIdAndLectureIdOrderByCreatedAtDesc(long userId, Long lectureId) {
+        return enrollmentHistoryJpaRepository.findTopByUserIdAndLectureIdOrderByCreatedAtDesc(userId, lectureId);
+    }
+
+    @Override
     public List<EnrollmentHistoryEntity> getEnrollmentListByUser(long userId, String status){
         return enrollmentHistoryJpaRepository.getEnrollmentListByUser(userId, status);
+    }
+
+    @Override
+    public EnrollmentHistoryEntity save(EnrollmentHistoryEntity enrollmentHistoryEntity) {
+        return enrollmentHistoryJpaRepository.save(enrollmentHistoryEntity);
     }
 
 

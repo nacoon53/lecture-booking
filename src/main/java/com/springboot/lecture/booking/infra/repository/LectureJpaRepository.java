@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LectureJpaRepository extends JpaRepository<LectureEntity, Long> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT l FROM LectureEntity l WHERE l.lectureId = :lectureId")
+    Optional<LectureEntity> findByIdForUpdate(@Param("lectureId") long lectureId);
+
     @Query("SELECT l FROM LectureEntity l WHERE l.lectureStartTime >= :startDate AND l.lectureStartTime < :endDate")
     List<LectureEntity> findLecturesByLectureStartTimeBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }

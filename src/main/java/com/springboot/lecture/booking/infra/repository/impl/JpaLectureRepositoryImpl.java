@@ -17,6 +17,11 @@ public class JpaLectureRepositoryImpl implements LectureRepository {
     private final LectureJpaRepository lectureJpaRepository;
 
     @Override
+    public Optional<LectureEntity> findByIdForUpdate(long lectureId){
+        return lectureJpaRepository.findByIdForUpdate(lectureId);
+    }
+
+    @Override
     public List<LectureEntity> findLecturesByLectureStartTimeBetween(LocalDateTime startDate, LocalDateTime endDate){
         return lectureJpaRepository.findLecturesByLectureStartTimeBetween(startDate, endDate);
     }
@@ -24,6 +29,11 @@ public class JpaLectureRepositoryImpl implements LectureRepository {
     @Override
     public List<LectureEntity> findAllById(Iterable<Long> ids) {
         return lectureJpaRepository.findAllById(ids);
+    }
+
+    @Override
+    public LectureEntity save(LectureEntity lectureEntity) {
+        return lectureJpaRepository.save(lectureEntity);
     }
 
 }
