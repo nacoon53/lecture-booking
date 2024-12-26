@@ -35,6 +35,20 @@ public class LecturesService implements LecturesUseCase {
     }
 
     @Override
+    @Transactional
+    public LectureEntity cancelLecture(long userId, long lectureId) {
+        LectureEntity lecture = lectureRepository.findByIdForUpdate(lectureId).orElseThrow(() -> new EntityNotFoundException("강의를 찾을 수 없습니다."));
+
+        // 누가 무슨 강의를 취소했는지 DB에 저장
+        enrollmentHistoryService.saveEnrollmentHistoryForCancel(userId, lectureId);
+
+        lecture.decreaseEnrolledCount();
+        lectureRepository.save(lecture);
+
+        return lecture;
+    }
+
+    @Override
     public List<LectureEntity> getAppliedLecturesByUser(long userId) {
         List<Long> lectureIds = enrollmentHistoryService.getAppliedLectureIdsByUser(userId);
 

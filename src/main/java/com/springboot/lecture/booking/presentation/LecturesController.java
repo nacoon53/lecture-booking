@@ -60,4 +60,11 @@ public class LecturesController {
 
         return "ok";
     }
+
+    @PostMapping("/cancel")
+    public String cancelLectureByLectureId(@RequestBody LectureApplyRequestDTO requestDTO) {
+        lecturesUseCase.cancelLecture(userId, requestDTO.lectureId());
+
+        return "ok";
+    }
 }

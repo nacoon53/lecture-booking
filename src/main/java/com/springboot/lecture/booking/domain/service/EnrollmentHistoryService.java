@@ -29,6 +29,20 @@ public class EnrollmentHistoryService {
         return enrollmentHistoryRepository.save(enrollmentHistoryEntity);
     }
 
+    public EnrollmentHistoryEntity saveEnrollmentHistoryForCancel(long userId, long lectureId) {
+        if(hasNotAlreadyApplied(userId, lectureId)) {
+            throw new RuntimeException("현재 신청중인 강의가 아닙니다.");
+        }
+
+        EnrollmentHistoryEntity enrollmentHistoryEntity = EnrollmentHistoryEntity.builder()
+                .lectureId(lectureId)
+                .userId(userId)
+                .status(EnrollmentStatus.CANCEL.toString())
+                .build();
+
+        return enrollmentHistoryRepository.save(enrollmentHistoryEntity);
+    }
+
     public boolean hasAlreadyApplied(long userId, long lectureId) {
         EnrollmentHistoryEntity entity = enrollmentHistoryRepository.findTopByUserIdAndLectureIdOrderByCreatedAtDesc(userId, lectureId);
 
@@ -37,6 +51,10 @@ public class EnrollmentHistoryService {
         }
 
         return true;
+    }
+
+    public boolean hasNotAlreadyApplied(long userId, long lectureId) {
+        return !hasAlreadyApplied(userId, lectureId);
     }
 
     public List<Long> getAppliedLectureIdsByUser(long userId) {
